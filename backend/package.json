@@ -1,0 +1,40 @@
+{
+  "name": "threatlens-backend",
+  "version": "1.0.0",
+  "description": "ThreatLens Cyber Threat Intelligence Platform — Backend API",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/utils/seed.js",
+    "lint": "eslint src/",
+    "test": "echo \"Tests coming in a later phase\" && exit 0"
+  },
+  "keywords": [
+    "cybersecurity",
+    "threat-intelligence",
+    "soc",
+    "malware"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.7",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
