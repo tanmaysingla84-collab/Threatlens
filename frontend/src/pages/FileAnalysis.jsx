@@ -53,7 +53,7 @@ export default function FileAnalysis() {
     const timeoutId = setTimeout(() => controller.abort(), 120000);
 
     try {
-      const fetchResp = await fetch('http://localhost:5000/api/analyze/file', {
+      const fetchResp = await fetch('https://threatlens-z5jm.onrender.com/api/analyze/file', {
         method: 'POST',
         body: formData,
         signal: controller.signal

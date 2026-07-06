@@ -6,7 +6,7 @@ import axios from 'axios';
  * The JWT token injection and response normalization happens here.
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://threatlens-z5jm.onrender.com/api',
   timeout: 30_000,
   headers: {
     'Content-Type': 'application/json',
