@@ -105,20 +105,6 @@ Add these to `backend/.env` as you obtain them. The app degrades gracefully with
 
 *Note: ThreatMiner requires no API key.*
 
----
-
-## 📈 Build Phases
-
-| Phase | Status | Description |
-|---|---|---|
-| **1** | ✅ Complete | Project scaffold, Express app, Vite frontend, routing skeleton |
-| **2** | ✅ Complete | Basic mock login/register UI (no backend enforcement) |
-| **3** | ✅ Complete | Threat intel integrations + scoring engine |
-| **4** | ✅ Complete | File/URL/IP/Domain/Hash analysis endpoints + UI |
-| **5** | — | AI summary module |
-| **6** | ✅ Complete | Dashboard stats + Scan History (with Recharts via LocalStorage) |
-| **7** | — | PDF report generation |
-| **8** | — | Polish, hardening, documentation |
 
 ---
 
