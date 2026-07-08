@@ -1,37 +1,53 @@
-# ThreatLens — Cyber Threat Intelligence & Malware Analysis Platform
+# ThreatXLens — Cyber Threat Intelligence & Malware Analysis Platform
 
 > A production-grade SOC dashboard for triaging files, URLs, IPs, domains, and hashes against VirusTotal, MalwareBazaar, Hybrid Analysis, URLScan.io, ThreatMiner, and AbuseIPDB.
 
 ---
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
-```
+```text
 cti-platform/
-├── backend/     Node.js + Express + MongoDB (Mongoose) API
+├── backend/     Node.js + Express API (Stateless)
 ├── frontend/    React (Vite) + Tailwind CSS dashboard
 └── docs/        API, Environment, and Deployment documentation
 ```
 
 **Frontend stack:** React, Vite, Tailwind CSS v3, React Router v6, Axios, TanStack React Query, Framer Motion, Recharts  
-**Backend stack:** Node.js, Express.js, MongoDB, Mongoose, bcryptjs, jsonwebtoken  
-**Auth:** JWT (15-min access tokens + 7-day refresh tokens), bcrypt (cost 12), RBAC (`user`|`admin`)
+**Backend stack:** Node.js, Express.js, Multer  
+**Storage:** Stateless backend; frontend utilizes `localStorage` for scan history persistence.  
+**Auth:** Disabled / Mocked on frontend (Database-free mode).
 
 ---
 
-## Quick Start (Local Development)
+## ⚙️ How It Works
+
+ThreatXLens acts as a central aggregator and scoring engine for various Threat Intelligence feeds.
+
+1. **Stateless Operation:** The platform runs in a database-free mode. There is no backend user authentication required.
+2. **Initiating a Scan:** A user selects an indicator type (File, Hash, IP, Domain, or URL) and submits it via the frontend UI. For file scans, the file is temporarily uploaded to the backend, hashed (SHA-256), and then securely deleted.
+3. **Data Aggregation:** The Node.js backend receives the request and utilizes the internal `AggregatorService`. This service concurrently fires requests to all relevant configured third-party threat intelligence APIs based on the IOC type:
+   - **Files / Hashes:** VirusTotal, MalwareBazaar, Hybrid Analysis
+   - **IP Addresses:** VirusTotal, AbuseIPDB, ThreatMiner
+   - **Domains:** VirusTotal, ThreatMiner, URLScan.io
+   - **URLs:** VirusTotal, URLScan.io
+4. **Risk Scoring:** Once the data is aggregated, the `ScoringService` normalizes the results. It calculates a standardized Risk Score (0-100) by evaluating the number of malicious detections against the total number of engines/checks. It assigns a severity level (Clean, Low, Medium, High, Critical).
+5. **Presentation & History:** The final aggregated report and calculated score are returned to the frontend. The frontend displays this rich, unified report using responsive data visualizations and saves the scan record to your browser's `localStorage` for future reference.
+
+---
+
+## 🚀 Quick Start (Local Development)
 
 ### Prerequisites
 
 - Node.js ≥ 18
-- MongoDB running locally (`mongod`) or a MongoDB Atlas connection string
 - npm ≥ 9
 
 ### 1. Clone and install
 
 ```bash
 git clone <repo-url>
-cd threatlens
+cd threatxlens
 
 # Install backend dependencies
 cd backend && npm install
@@ -46,7 +62,7 @@ cd ../frontend && npm install
 # Backend
 cd backend
 cp .env.example .env
-# Edit .env — fill in MONGODB_URI and JWT secrets at minimum
+# Edit .env — fill in API keys (no database URI required)
 
 # Frontend  
 cd ../frontend
@@ -69,13 +85,13 @@ npm run dev
 ### 4. Verify everything works
 
 ```bash
-# Should return { success: true, data: { server: "ok", db: "connected" } }
+# Should return { success: true, data: { server: "ok", db: "stateless" } }
 curl http://localhost:5000/api/health
 ```
 
 ---
 
-## API Keys (Optional for Phase 1)
+## 🔑 API Keys
 
 Add these to `backend/.env` as you obtain them. The app degrades gracefully with a clear "API key not configured" message for any missing key:
 
@@ -87,27 +103,26 @@ Add these to `backend/.env` as you obtain them. The app degrades gracefully with
 | `URLSCAN_API_KEY` | [urlscan.io](https://urlscan.io/) | URL scanning |
 | `ABUSEIPDB_API_KEY` | [abuseipdb.com](https://www.abuseipdb.com/) | IP reputation |
 
-ThreatMiner requires no API key.
+*Note: ThreatMiner requires no API key.*
 
 ---
 
-## Build Phases
+## 📈 Build Phases
 
 | Phase | Status | Description |
 |---|---|---|
 | **1** | ✅ Complete | Project scaffold, Express app, Vite frontend, routing skeleton |
-| **2** | 🔜 Next | Auth endpoints, JWT, User model, login/register UI |
-| **3** | — | Threat intel integrations + scoring engine |
-| **4** | — | File/URL/IP/Domain/Hash analysis endpoints + UI |
+| **2** | ✅ Complete | Basic mock login/register UI (no backend enforcement) |
+| **3** | ✅ Complete | Threat intel integrations + scoring engine |
+| **4** | ✅ Complete | File/URL/IP/Domain/Hash analysis endpoints + UI |
 | **5** | — | AI summary module |
-| **6** | — | Dashboard stats + Scan History (with Recharts) |
+| **6** | ✅ Complete | Dashboard stats + Scan History (with Recharts via LocalStorage) |
 | **7** | — | PDF report generation |
-| **8** | — | Admin panel |
-| **9** | — | Polish, hardening, documentation |
+| **8** | — | Polish, hardening, documentation |
 
 ---
 
-## NPM Scripts
+## 💻 NPM Scripts
 
 | Directory | Command | Description |
 |---|---|---|
@@ -119,19 +134,18 @@ ThreatMiner requires no API key.
 
 ---
 
-## Security Notes
+## 🛡️ Security Notes
 
 - All API keys live in `backend/.env` only — never bundled into the frontend.
 - All external threat-intel calls are server-side only.
-- Uploaded files are stored in `backend/uploads/` (outside web root), hashed, then deleted.
-- Passwords hashed with bcrypt (cost factor 12).
-- Rate limiting: 100 req/15 min globally; 10 req/15 min on auth; 20 req/5 min on analysis.
+- Uploaded files are stored in `backend/uploads/` (outside web root), hashed, then successfully deleted.
+- Rate limiting: 100 req/15 min globally; 20 req/5 min on analysis.
 - Helmet sets all recommended security headers.
 - CORS allows only origins listed in `ALLOWED_ORIGINS`.
 
 ---
 
-## Docs
+## 📚 Docs
 
 - [docs/API.md](docs/API.md) — Complete REST API reference
 - [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) — All environment variables documented

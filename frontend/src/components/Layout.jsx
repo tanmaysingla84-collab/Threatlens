@@ -40,7 +40,7 @@ export default function Layout({ children }) {
               TL
             </div>
             <div>
-              <span className="font-bold text-sm text-gradient">ThreatLens</span>
+              <span className="font-bold text-sm text-gradient">ThreatXLens</span>
               <p className="text-[10px] text-text-muted leading-none mt-0.5">SOC Platform</p>
             </div>
           </Link>
@@ -84,7 +84,7 @@ export default function Layout({ children }) {
             >
               <span className="text-xl">☰</span>
             </button>
-            <div className="md:hidden font-bold text-sm text-gradient ml-2">ThreatLens</div>
+            <div className="md:hidden font-bold text-sm text-gradient ml-2">ThreatXLens</div>
           </div>
           <div className="flex items-center gap-3">
             {/* DB connection indicator */}
